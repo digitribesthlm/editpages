@@ -36,6 +36,7 @@ export default async function handler(req, res) {
   } catch (error) {
     console.error('API error:', error);
     console.error('MongoDB URI:', process.env.MONGODB_URI ? 'Set' : 'Not set');
+    console.error('MongoDB DB:', process.env.MONGODB_DB ? 'Set' : 'Not set');
     return res.status(500).json({ message: 'Internal server error', details: error.message });
   }
 }
