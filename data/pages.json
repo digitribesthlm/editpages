@@ -1,0 +1,25 @@
+{
+  "pages": [
+    {
+      "id": 1,
+      "url": "https://example.com/home",
+      "title": "Welcome to Example.com - Your One-Stop Shop",
+      "description": "Discover a wide range of products and services at Example.com. We offer quality, affordability, and excellent customer service.",
+      "searchTerms": ["example", "shop"]
+    },
+    {
+      "id": 2,
+      "url": "https://example.com/products",
+      "title": "Our Products - High-Quality Items for Every Need",
+      "description": "Browse our extensive catalog of products. From electronics to home goods, we have everything you need at competitive prices.",
+      "searchTerms": ["products", "catalog"]
+    },
+    {
+      "id": 3,
+      "url": "https://example.com/about",
+      "title": "About Us - Our Story and Mission",
+      "description": "Learn about Example.com's history, our commitment to customer satisfaction, and our vision for the future of online shopping.",
+      "searchTerms": ["about", "mission"]
+    }
+  ]
+}
