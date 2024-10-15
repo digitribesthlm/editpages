@@ -10,7 +10,9 @@ export default async function handler(req, res) {
   }
 
   try {
+    console.log('Attempting to connect to database...');
     const { db } = await connectToDatabase();
+    console.log('Successfully connected to database');
 
     const user = await db.collection("users").findOne({
       "accessTokens.token": accessId
@@ -21,7 +23,9 @@ export default async function handler(req, res) {
     }
 
     if (method === 'GET') {
+      console.log('Fetching pages for companyId:', user.companyId);
       const pages = await db.collection("pages").find({ companyId: user.companyId }).toArray();
+      console.log('Fetched pages:', pages.length);
       return res.status(200).json(pages);
     } else if (method === 'PUT') {
       // ... (rest of your PUT logic)
@@ -31,6 +35,7 @@ export default async function handler(req, res) {
     }
   } catch (error) {
     console.error('API error:', error);
+    console.error('MongoDB URI:', process.env.MONGODB_URI ? 'Set' : 'Not set');
     return res.status(500).json({ message: 'Internal server error', details: error.message });
   }
 }
