@@ -34,9 +34,18 @@ export default async function handler(req, res) {
       return res.status(405).json({ message: `Method ${method} Not Allowed` });
     }
   } catch (error) {
-    console.error('API error:', error);
-    console.error('MongoDB URI:', process.env.MONGODB_URI ? 'Set' : 'Not set');
-    console.error('MongoDB DB:', process.env.MONGODB_DB ? 'Set' : 'Not set');
-    return res.status(500).json({ message: 'Internal server error', details: error.message });
+    console.error('API error:', error.message);
+    
+    // Safe logging of environment variable status
+    console.log('Environment variables status:');
+    console.log('MONGODB_URI:', process.env.MONGODB_URI ? 'Set' : 'Not set');
+    console.log('MONGODB_DB:', process.env.MONGODB_DB ? 'Set' : 'Not set');
+
+    // In development, you might want more details
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('Full error:', error);
+    }
+
+    return res.status(500).json({ message: 'Internal server error' });
   }
 }
