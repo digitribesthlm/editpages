@@ -41,7 +41,7 @@ export default async function handler(req, res) {
         return res.status(404).json({ message: 'Page not found' });
       }
       console.log('Page updated successfully');
-      return res.status(200).json({ message: 'Page updated successfully' });
+      return res.status(200).json({ message: 'Page updated successfully!' });
     } else {
       res.setHeader('Allow', ['GET', 'PUT']);
       return res.status(405).json({ message: `Method ${method} Not Allowed` });
