@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ExternalLink, CheckCircle, XCircle, Award, Globe, Download } from 'lucide-react';
+import { ExternalLink, CheckCircle, XCircle, Award, Globe } from 'lucide-react';
 
 const PageList = ({ accessId }) => {
   const [pages, setPages] = useState([]);
@@ -60,32 +60,6 @@ const PageList = ({ accessId }) => {
     return { totalScore: overallPercentage, langScore: languagePercentage };
   };
 
-  const downloadCSV = () => {
-    const headers = ['url', 'title', 'description'];
-    const csvData = pages.map(page => ({
-      url: page.url,
-      title: page.title,
-      description: page.description
-    }));
-
-    const csvContent = [
-      headers.join(','),
-      ...csvData.map(row => 
-        headers.map(header => 
-          `"${row[header]?.replace(/"/g, '""') || ''}"`)
-        .join(',')
-      )
-    ].join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.setAttribute('download', 'page_data.csv');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
   if (loading) return <div>Loading...</div>;
   if (error) return <div className="error-message">Error: {error}</div>;
   if (pages.length === 0) return <div>No pages found for this domain.</div>;
@@ -98,14 +72,7 @@ const PageList = ({ accessId }) => {
           <p className="text-3xl font-bold text-blue-600">{overallScore}%</p>
           <p className="text-sm text-gray-600">Language Score: {languageScore}%</p>
         </div>
-        <div className="flex items-center gap-4">
-          <button
-            onClick={downloadCSV}
-            className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-          >
-            <Download className="w-4 h-4" />
-            Download CSV
-          </button>
+        <div>
           <Award className={`w-12 h-12 ${overallScore >= 80 ? 'text-yellow-400' : 'text-gray-400'}`} />
         </div>
       </div>
