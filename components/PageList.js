@@ -56,12 +56,13 @@ const PageList = ({ accessId }) => {
     
     if (page.searchTerms[0] && content.includes(page.searchTerms[0].toLowerCase())) score++;
     if (page.searchTerms[1] && content.includes(page.searchTerms[1].toLowerCase())) score++;
+    if (page.searchTerms[2] && content.includes(page.searchTerms[2].toLowerCase())) score++;
     if (page.lang_check === "match") score++;
     return score;
   };
 
   const calculateOverallScores = (pages) => {
-    const totalPossibleScore = pages.length * 3; // 2 for keywords, 1 for language
+    const totalPossibleScore = pages.length * 4; // 3 for keywords, 1 for language
     const totalScore = pages.reduce((sum, page) => sum + page.score, 0);
     const overallPercentage = Math.round((totalScore / totalPossibleScore) * 100);
     
@@ -163,9 +164,10 @@ const PageList = ({ accessId }) => {
       <table className="w-full table-fixed bg-white">
         <thead className="bg-gray-100">
           <tr>
-            <th className="w-2/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title / Meta / URL</th>
+            <th className="w-1/3 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title / Meta / URL</th>
             <th className="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">KW1</th>
             <th className="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">KW2</th>
+            <th className="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">KW3</th>
             <th className="w-[10%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lang</th>
             <th className="w-[10%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
             <th className="w-[10%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
@@ -186,10 +188,13 @@ const PageList = ({ accessId }) => {
                 <KeywordStatus keyword={page.searchTerms[1]} title={page.title} description={page.description} />
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
+                <KeywordStatus keyword={page.searchTerms[2]} title={page.title} description={page.description} />
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
                 <LanguageStatus langCheck={page.lang_check} />
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
-                <div className="text-sm font-medium text-gray-900">{page.score}/3</div>
+                <div className="text-sm font-medium text-gray-900">{page.score}/4</div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <Link href={`/edit/${page.pageId}?accessId=${accessId}`} className="text-indigo-600 hover:text-indigo-900 mr-4">
