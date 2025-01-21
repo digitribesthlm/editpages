@@ -43,8 +43,12 @@ const PageList = ({ accessId }) => {
 
   const calculatePageScore = (page) => {
     let score = 0;
-    if (page.searchTerms[0] && (page.title + page.description).toLowerCase().includes(page.searchTerms[0].toLowerCase())) score++;
-    if (page.searchTerms[1] && (page.title + page.description).toLowerCase().includes(page.searchTerms[1].toLowerCase())) score++;
+    const title = String(page.title || '');
+    const description = String(page.description || '');
+    const content = (title + description).toLowerCase();
+    
+    if (page.searchTerms[0] && content.includes(page.searchTerms[0].toLowerCase())) score++;
+    if (page.searchTerms[1] && content.includes(page.searchTerms[1].toLowerCase())) score++;
     if (page.lang_check === "match") score++;
     return score;
   };
@@ -157,7 +161,11 @@ const PageList = ({ accessId }) => {
 };
 
 const KeywordStatus = ({ keyword, title, description }) => {
-  const isPresent = keyword && (title + description).toLowerCase().includes(keyword.toLowerCase());
+  const safeTitle = String(title || '');
+  const safeDescription = String(description || '');
+  const content = (safeTitle + safeDescription).toLowerCase();
+  const isPresent = keyword && content.includes(keyword.toLowerCase());
+  
   return (
     <div className="flex items-center">
       {isPresent ? (
