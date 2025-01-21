@@ -9,6 +9,8 @@ const PageList = ({ accessId }) => {
   const [overallScore, setOverallScore] = useState(0);
   const [languageScore, setLanguageScore] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(40);
 
   useEffect(() => {
     const fetchPages = async () => {
@@ -41,6 +43,10 @@ const PageList = ({ accessId }) => {
 
     fetchPages();
   }, [accessId]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
 
   const calculatePageScore = (page) => {
     let score = 0;
@@ -102,6 +108,11 @@ const PageList = ({ accessId }) => {
            url.includes(search);
   });
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredPages.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredPages.length / itemsPerPage);
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div className="error-message">Error: {error}</div>;
   if (pages.length === 0) return <div>No pages found for this domain.</div>;
@@ -161,7 +172,7 @@ const PageList = ({ accessId }) => {
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
-          {filteredPages.map((page) => (
+          {currentItems.map((page) => (
             <tr key={page.pageId}>
               <td className="px-6 py-4">
                 <div className="text-sm font-medium text-gray-900">{page.title}</div>
@@ -192,6 +203,14 @@ const PageList = ({ accessId }) => {
           ))}
         </tbody>
       </table>
+      <PaginationControls 
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        totalPages={totalPages}
+        indexOfFirstItem={indexOfFirstItem}
+        indexOfLastItem={indexOfLastItem}
+        filteredPages={filteredPages}
+      />
     </div>
   );
 };
@@ -223,6 +242,85 @@ const LanguageStatus = ({ langCheck }) => {
         <XCircle className="w-5 h-5 text-red-500 mr-2" />
       )}
       <Globe className="w-5 h-5 text-blue-500" />
+    </div>
+  );
+};
+
+const PaginationControls = ({ currentPage, setCurrentPage, totalPages, indexOfFirstItem, indexOfLastItem, filteredPages }) => {
+  return (
+    <div className="mt-4 flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+      <div className="flex flex-1 justify-between sm:hidden">
+        <button
+          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          className={`relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium ${
+            currentPage === 1 
+              ? 'text-gray-300'
+              : 'text-gray-700 hover:bg-gray-50'
+          }`}
+        >
+          Previous
+        </button>
+        <button
+          onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+          disabled={currentPage === totalPages}
+          className={`relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium ${
+            currentPage === totalPages
+              ? 'text-gray-300'
+              : 'text-gray-700 hover:bg-gray-50'
+          }`}
+        >
+          Next
+        </button>
+      </div>
+      <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+        <div>
+          <p className="text-sm text-gray-700">
+            Showing <span className="font-medium">{indexOfFirstItem + 1}</span> to{' '}
+            <span className="font-medium">
+              {Math.min(indexOfLastItem, filteredPages.length)}
+            </span>{' '}
+            of <span className="font-medium">{filteredPages.length}</span> results
+          </p>
+        </div>
+        <div>
+          <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className={`relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 ${
+                currentPage === 1 ? 'cursor-not-allowed' : 'cursor-pointer'
+              }`}
+            >
+              <span className="sr-only">Previous</span>
+              ←
+            </button>
+            {[...Array(totalPages)].map((_, index) => (
+              <button
+                key={index + 1}
+                onClick={() => setCurrentPage(index + 1)}
+                className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${
+                  currentPage === index + 1
+                    ? 'z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
+                    : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50'
+                }`}
+              >
+                {index + 1}
+              </button>
+            ))}
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className={`relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 ${
+                currentPage === totalPages ? 'cursor-not-allowed' : 'cursor-pointer'
+              }`}
+            >
+              <span className="sr-only">Next</span>
+              →
+            </button>
+          </nav>
+        </div>
+      </div>
     </div>
   );
 };
