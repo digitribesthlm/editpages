@@ -11,6 +11,8 @@ const PageList = ({ accessId }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(40);
+  const [sortField, setSortField] = useState(null);
+  const [sortDirection, setSortDirection] = useState('asc');
 
   useEffect(() => {
     const fetchPages = async () => {
@@ -98,7 +100,85 @@ const PageList = ({ accessId }) => {
     document.body.removeChild(link);
   };
 
-  const filteredPages = pages.filter(page => {
+  const sortPages = (pages) => {
+    if (!sortField) return pages;
+
+    return [...pages].sort((a, b) => {
+      let aValue, bValue;
+
+      switch (sortField) {
+        case 'title':
+          aValue = String(a.title || '').toLowerCase();
+          bValue = String(b.title || '').toLowerCase();
+          break;
+        case 'url':
+          aValue = String(a.url || '').toLowerCase();
+          bValue = String(b.url || '').toLowerCase();
+          break;
+        case 'kw1':
+          aValue = String(a.searchTerms[0] || '').toLowerCase();
+          bValue = String(b.searchTerms[0] || '').toLowerCase();
+          break;
+        case 'kw2':
+          aValue = String(a.searchTerms[1] || '').toLowerCase();
+          bValue = String(b.searchTerms[1] || '').toLowerCase();
+          break;
+        case 'kw3':
+          aValue = String(a.searchTerms[2] || '').toLowerCase();
+          bValue = String(b.searchTerms[2] || '').toLowerCase();
+          break;
+        case 'lang':
+          aValue = a.lang_check === 'match' ? 1 : 0;
+          bValue = b.lang_check === 'match' ? 1 : 0;
+          break;
+        case 'score':
+          aValue = a.score;
+          bValue = b.score;
+          break;
+        default:
+          return 0;
+      }
+
+      if (sortDirection === 'asc') {
+        return aValue > bValue ? 1 : -1;
+      } else {
+        return aValue < bValue ? 1 : -1;
+      }
+    });
+  };
+
+  const handleSort = (field) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  const SortableHeader = ({ field, children }) => {
+    const isActive = sortField === field;
+    
+    return (
+      <th 
+        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-50"
+        onClick={() => handleSort(field)}
+      >
+        <div className="flex items-center space-x-1">
+          <span>{children}</span>
+          <span className="inline-block w-4">
+            {isActive && (
+              <span className="text-gray-900">
+                {sortDirection === 'asc' ? '↑' : '↓'}
+              </span>
+            )}
+          </span>
+        </div>
+      </th>
+    );
+  };
+
+  const filteredPages = sortPages(pages.filter(page => {
     const search = searchTerm.toLowerCase();
     const title = String(page.title || '').toLowerCase();
     const description = String(page.description || '').toLowerCase();
@@ -107,7 +187,7 @@ const PageList = ({ accessId }) => {
     return title.includes(search) || 
            description.includes(search) || 
            url.includes(search);
-  });
+  }));
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -164,13 +244,15 @@ const PageList = ({ accessId }) => {
       <table className="w-full table-fixed bg-white">
         <thead className="bg-gray-100">
           <tr>
-            <th className="w-1/3 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title / Meta / URL</th>
-            <th className="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">KW1</th>
-            <th className="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">KW2</th>
-            <th className="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">KW3</th>
-            <th className="w-[10%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lang</th>
-            <th className="w-[10%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
-            <th className="w-[10%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+            <SortableHeader field="title" className="w-1/3">Title / Meta / URL</SortableHeader>
+            <SortableHeader field="kw1" className="w-1/6">KW1</SortableHeader>
+            <SortableHeader field="kw2" className="w-1/6">KW2</SortableHeader>
+            <SortableHeader field="kw3" className="w-1/6">KW3</SortableHeader>
+            <SortableHeader field="lang" className="w-[10%]">Lang</SortableHeader>
+            <SortableHeader field="score" className="w-[10%]">Score</SortableHeader>
+            <th className="w-[10%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Actions
+            </th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
