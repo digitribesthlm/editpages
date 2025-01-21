@@ -118,7 +118,7 @@ const PageList = ({ accessId }) => {
   if (pages.length === 0) return <div>No pages found for this domain.</div>;
 
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto w-full max-w-[95vw] mx-auto">
       <div className="mb-4 p-4 bg-blue-100 rounded-lg flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold">Overall SEO Score</h2>
@@ -160,15 +160,15 @@ const PageList = ({ accessId }) => {
           </div>
         )}
       </div>
-      <table className="min-w-full bg-white">
+      <table className="w-full table-fixed bg-white">
         <thead className="bg-gray-100">
           <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title / Meta / URL</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">KW1</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">KW2</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lang</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+            <th className="w-2/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title / Meta / URL</th>
+            <th className="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">KW1</th>
+            <th className="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">KW2</th>
+            <th className="w-[10%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lang</th>
+            <th className="w-[10%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
+            <th className="w-[10%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
@@ -222,13 +222,13 @@ const KeywordStatus = ({ keyword, title, description }) => {
   const isPresent = keyword && content.includes(keyword.toLowerCase());
   
   return (
-    <div className="flex items-center">
+    <div className="flex items-center space-x-2 overflow-hidden">
       {isPresent ? (
-        <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
+        <CheckCircle className="flex-shrink-0 w-5 h-5 text-green-500" />
       ) : (
-        <XCircle className="w-5 h-5 text-red-500 mr-2" />
+        <XCircle className="flex-shrink-0 w-5 h-5 text-red-500" />
       )}
-      <span className="text-sm text-gray-900">{keyword || 'N/A'}</span>
+      <span className="text-sm text-gray-900 truncate">{keyword || 'N/A'}</span>
     </div>
   );
 };
